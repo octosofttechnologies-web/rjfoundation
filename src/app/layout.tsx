@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Toaster } from "@/components/ui/toaster";
+import { ScrollToTop } from '@/components/ScrollToTop';
 
 export const metadata: Metadata = {
   title: {
@@ -33,6 +34,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
+        <ScrollToTop />
       </body>
     </html>
   );

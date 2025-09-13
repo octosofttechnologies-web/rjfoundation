@@ -33,7 +33,7 @@ export default function ContactUsPage() {
 
   const onSubmit = (data: ContactFormValues) => {
     const recipient = "abraham.owumi@rjolad.com";
-    const subject = `Enquiry from ${data.firstName} ${data.lastName}`;
+    const subject = `R-Jolad Foundation Enquiry from ${data.firstName} ${data.lastName}`;
     const body = `
       Hi, I want to make an enquiry.:
       
