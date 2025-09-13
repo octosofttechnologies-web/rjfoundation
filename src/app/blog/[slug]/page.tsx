@@ -3,6 +3,7 @@ import { getBlogPostBySlug, getBlogPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { PageHeader } from '@/components/PageHeader';
+import parse, { domToReact, Element } from 'html-react-parser';
 
 type BlogPostPageProps = {
   params: {
@@ -25,7 +26,6 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
     };
   }
 
-  // Strip HTML tags for a clean description
   const description = post.excerpt.rendered.replace(/<[^>]+>/g, '');
 
   return {
@@ -33,6 +33,31 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
     description: description,
   };
 }
+
+const parseOptions = {
+  replace: (domNode: any) => {
+    if (domNode instanceof Element && domNode.name === 'img' && domNode.attribs) {
+      const { src, alt, width, height, class: className } = domNode.attribs;
+      
+      const widthNum = width ? parseInt(width, 10) : 1200;
+      const heightNum = height ? parseInt(height, 10) : 600;
+
+      if (!src) {
+        return <></>;
+      }
+
+      return (
+        <Image
+          src={src}
+          alt={alt || ''}
+          width={widthNum}
+          height={heightNum}
+          className={`${className} rounded-lg shadow-lg my-6`}
+        />
+      );
+    }
+  },
+};
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const post = await getBlogPostBySlug(params.slug);
@@ -60,9 +85,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         )}
         <div className="prose prose-lg max-w-none mx-auto text-muted-foreground">
           <div
-            className="prose-p:text-lg prose-headings:font-headline prose-headings:text-primary"
-            dangerouslySetInnerHTML={{ __html: post.content.rendered }}
-          />
+            className="prose-p:text-lg prose-headings:font-headline prose-headings:text-primary prose-a:text-primary"
+          >
+            {parse(post.content.rendered, parseOptions)}
+          </div>
         </div>
       </div>
     </>
