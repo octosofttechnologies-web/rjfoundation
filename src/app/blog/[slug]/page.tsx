@@ -39,20 +39,26 @@ const parseOptions = {
     if (domNode instanceof Element && domNode.name === 'img' && domNode.attribs) {
       const { src, alt, width, height, class: className } = domNode.attribs;
       
+      // Use data-src if src is a placeholder data URI
+      let imageUrl = src;
+      if (src && src.startsWith('data:image/')) {
+        imageUrl = domNode.attribs['data-src'] || src;
+      }
+
       const widthNum = width ? parseInt(width, 10) : 1200;
       const heightNum = height ? parseInt(height, 10) : 600;
 
-      if (!src) {
-        return <></>;
+      if (!imageUrl || imageUrl.startsWith('data:image/')) {
+        return <></>; // Don't render if there's no valid image URL
       }
 
       return (
         <Image
-          src={src}
+          src={imageUrl}
           alt={alt || ''}
           width={widthNum}
           height={heightNum}
-          className={`${className} rounded-lg shadow-lg my-6`}
+          className={`${className || ''} rounded-lg shadow-lg my-6`}
         />
       );
     }
